@@ -1,0 +1,26 @@
+{
+  "name": "animelist",
+  "version": "1.0.0",
+  "description": "",
+  "homepage": "https://github.com/JxrleyE/CMSC335_Final#readme",
+  "bugs": {
+    "url": "https://github.com/JxrleyE/CMSC335_Final/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JxrleyE/CMSC335_Final.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "express": "^5.2.1",
+    "mongo": "^0.1.0",
+    "mongoose": "^9.6.1",
+    "node": "^24.15.0"
+  }
+}
