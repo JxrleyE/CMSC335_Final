@@ -17,59 +17,54 @@ app.set("views", path.resolve(__dirname, "templates"));
 require("dotenv").config();
 
 app.get("/", (req,res) => {
-    res.render("login");
+    res.render("login", { error: null, 
+                          username: "" });
 });
 
 app.get("/signup", (req,res) => {
-    res.render("signup");
+    res.render("signup", { error: null, 
+                           username: "" });
 });
 
 app.post("/signup", async (req, res) => {
-
     let {username, pw} = req.body;
+
     /* check to see if username already exists */
-    const name  = await User.find({name:username})
-    console.log(name);
+    const existing = await User.find({name: username});
 
-    if (name.length > 0) {
-        return res.send("Username already exists");
-    } else {
-        const saltRounds = 10;
-        const hashedPass = await bcrypt.hash(pw,saltRounds);
-
-        /* create and add user to db */
-        await User.create({
-            name: username,
-            passwordHash: hashedPass
-        });
+    if (existing.length > 0) {
+        return res.render("signup", { error: "Username already taken. Please choose another.", 
+                                      username });
     }
+
+    const hashedPass = await bcrypt.hash(pw, 10);
+    await User.create({ name: username, passwordHash: hashedPass });
+    res.redirect("/");
 });
 
 app.post("/login", async (req,res) => {
-    
     try {
-    let {username, pw} = req.body;
-
-    let user = await User.findOne({name:username});
-
-    if(!user) {
-        res.send("No Username found");
-    } else {
+        let {username, pw} = req.body;
 
         /* since passwordHash has select:false, we have to tell mongo to include
            it when returning user */
-        let userPW = await User.findOne({name:username}).select("+passwordHash");
+        let user = await User.findOne({name: username}).select("+passwordHash");
 
-        let passwordMatch = bcrypt.compareSync(pw, userPW.passwordHash);
+        if (!user) {
+            return res.render("login", { error: "No account found with that username.", username });
+        }
+
+        let passwordMatch = bcrypt.compareSync(pw, user.passwordHash);
 
         if (!passwordMatch) {
-            return res.send("Incorrect password")
-        } else {
-            res.render("home");
+            return res.render("login", { error: "Incorrect password. Please try again.", 
+                                         username });
         }
-    }
+
+        res.render("home");
     } catch (err) {
-        res.send("Something went wrong");
+        res.render("login", { error: "Something went wrong. Please try again.", 
+                              username: "" });
     }
 });
 
@@ -88,4 +83,5 @@ app.post("/login", async (req,res) => {
     process.exit(1);
    }
 })();
+
 
