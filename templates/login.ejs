@@ -7,14 +7,14 @@
 </head>
 <body>
 
-    <div>
-        <h2> Login </h2>
+    <div> 
+        <h2> Login </h3>
             <% if (error) { %>
                 <p style="color: red;"><%= error %></p>
             <% } %>
-            <form action="/login" method="POST">
+            <form action="/login">
                 <label> Username: </label>
-                <input id="username" name="username" value="<%= username %>" placeholder="Please enter your username" required>
+                <input id="username" name="username" placeholder="Please enter your username" required>
 
                 <label> Password: </label>
                 <input id="pw" name="pw" placeholder="Please enter your password" required>
