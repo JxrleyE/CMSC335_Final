@@ -21,6 +21,11 @@ app.get("/", (req,res) => {
                           username: "" });
 });
 
+app.get("/login", (req,res) => {
+    res.render("login", { error: null,
+                          username: "" });
+})
+
 app.get("/signup", (req,res) => {
     res.render("signup", { error: null, 
                            username: "" });
@@ -61,7 +66,7 @@ app.post("/login", async (req,res) => {
                                          username });
         }
 
-        res.render("home");
+        res.render("home", {username});
     } catch (err) {
         res.render("login", { error: "Something went wrong. Please try again.", 
                               username: "" });
