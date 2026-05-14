@@ -45,10 +45,21 @@ router.post("/login", async (req, res) => {
             return res.render("login", { error: "Incorrect password. Please try again.", username });
         }
 
-        res.render("home", { username });
+        req.session.user = username;
+        res.redirect("/home");
     } catch (err) {
         res.render("login", { error: "Something went wrong. Please try again.", username: "" });
     }
+});
+
+router.get("/home", (req, res) => {
+    if (!req.session.user) return res.redirect("/login");
+    res.render("home", { username: req.session.user });
+});
+
+router.get("/logout", (req, res) => {
+    req.session.destroy();
+    res.redirect("/login");
 });
 
 module.exports = router;

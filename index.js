@@ -2,6 +2,7 @@ const express = require("express");
 const path = require("path");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
+const session = require("express-session");
 
 require("dotenv").config();
 
@@ -11,6 +12,15 @@ const app = express();
 const portNumber = 4001;
 
 app.use(bodyParser.urlencoded({ extended: false }));
+
+/* to start saving users sessions */
+app.use(session({
+    secret: "dev-secret",
+    resave: false,
+    saveUninitialized: false
+}));
+
+/* connect to templates so that it refrences the files in there */
 app.set("view engine", "ejs");
 app.set("views", path.resolve(__dirname, "templates"));
 
