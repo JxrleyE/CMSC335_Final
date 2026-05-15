@@ -1,6 +1,7 @@
 const express = require("express");
 const bcrypt = require("bcrypt");
 const User = require("../model/Users.js");
+const Anime = require("../model/Anime.js");
 
 const router = express.Router();
 
@@ -52,9 +53,25 @@ router.post("/login", async (req, res) => {
     }
 });
 
-router.get("/home", (req, res) => {
+router.get("/home", async (req, res) => {
     if (!req.session.user) return res.redirect("/login");
-    res.render("home", { username: req.session.user });
+
+    const username = req.session.user;
+    const q = req.query.q || "";
+    let searchResults = [];
+
+    if (q) {
+        try {
+            const response = await fetch(`https://api.jikan.moe/v4/anime?q=${encodeURIComponent(q)}&limit=8&sfw=true`);
+            const json = await response.json();
+            searchResults = json.data || [];
+        } catch (err) {
+            searchResults = [];
+        }
+    }
+
+    const animeList = await Anime.find({ username });
+    res.render("home", { username, animeList, searchResults, query: q });
 });
 
 router.get("/logout", (req, res) => {
