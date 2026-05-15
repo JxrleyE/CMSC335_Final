@@ -7,11 +7,13 @@ const session = require("express-session");
 require("dotenv").config();
 
 const authRouter = require("./routes/userAuth.js");
+const animeRouter = require("./routes/anime.js");
 
 const app = express();
 const portNumber = 4001;
 
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(express.static(path.join(__dirname, "css")));
 
 /* to start saving users sessions */
 app.use(session({
@@ -25,6 +27,7 @@ app.set("view engine", "ejs");
 app.set("views", path.resolve(__dirname, "templates"));
 
 app.use("/", authRouter);
+app.use("/", animeRouter);
 
 
 /* connecting to mongoose and running server */

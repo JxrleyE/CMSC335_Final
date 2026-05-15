@@ -3,12 +3,68 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home</title>
+    <title> Home </title>
+    <link rel="stylesheet" href="/style.css">
 </head>
-<body>
+<body class="home-page">
 
-    <h3>Welcome back, <%= username %>!</h3>
-    <a href="/logout"><button>Logout</button></a>
+    <div class="home-wrapper">
+
+        <div class="home-header">
+            <h1>Welcome back, <%= username %>!</h1>
+            <a href="/logout"><button class="logout-btn">Logout</button></a>
+        </div>
+
+        <p class="tagline">AnimeList is your personal anime tracker! — Search for any anime and build a list of everything you've watched!</p>
+
+        <form class="search-form" action="/home" method="GET">
+            <input class="search-input" type="text" name="q" value="<%= query %>" placeholder="Search for an anime...">
+            <button class="search-btn" type="submit">Search</button>
+        </form>
+
+        <% if (searchResults.length > 0) { %>
+        <section class="results-section">
+            <h2 class="section-title">Results</h2>
+            <div class="anime-grid">
+                <% searchResults.forEach(function(anime) { %>
+                <div class="anime-card">
+                    <img class="anime-img" src="<%= anime.images.jpg.image_url %>" alt="<%= anime.title_english || anime.title %>">
+                    <div class="anime-info">
+                        <p class="anime-title"><%= anime.title_english || anime.title %></p>
+                        <form action="/anime/add" method="POST">
+                            <input type="hidden" name="malId"    value="<%= anime.mal_id %>">
+                            <input type="hidden" name="title"    value="<%= anime.title_english || anime.title %>">
+                            <input type="hidden" name="imageUrl" value="<%= anime.images.jpg.image_url %>">
+                            <button class="add-btn" type="submit">+ Add</button>
+                        </form>
+                    </div>
+                </div>
+                <% }); %>
+            </div>
+        </section>
+        <% } %>
+
+        <section class="list-section">
+            <h2 class="section-title">My List (<%= animeList.length %>)</h2>
+            <% if (animeList.length === 0) { %>
+                <p class="empty-msg">Your list is empty. Search for anime above to add them!</p>
+            <% } else { %>
+            <div class="list-items">
+                <% animeList.forEach(function(entry) { %>
+                <div class="list-item">
+                    <img class="list-img" src="<%= entry.imageUrl %>" alt="<%= entry.title %>">
+                    <p class="list-title"><%= entry.title %></p>
+                    <form action="/anime/remove" method="POST">
+                        <input type="hidden" name="malId" value="<%= entry.malId %>">
+                        <button class="remove-btn" type="submit">Remove</button>
+                    </form>
+                </div>
+                <% }); %>
+            </div>
+            <% } %>
+        </section>
+
+    </div>
 
 </body>
 </html>
